@@ -27,6 +27,36 @@ th{background:#34495e;color:#ffcc00;text-transform:uppercase;font-weight:600;}
 #infoModal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;z-index:1200;}
 #infoContent{background:#1c2833;padding:20px 30px;border-radius:12px;color:#ffd700;text-align:center;box-shadow:0 0 15px #ffd700cc;}
 #infoClose{margin-top:15px;background:#ffd700;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;color:#111;font-weight:600;}
+/* Change Logs Button */
+#changeLogsBtn {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 10px;
+    padding: 4px 8px;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffd700;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    z-index: 1000;
+    transition: all 0.2s;
+}
+#changeLogsBtn:hover { background: rgba(255, 255, 255, 0.2); }
+/* Change Logs Modal */
+#changeLogsModal {
+    display: none;
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.6);
+    justify-content:center; align-items:center;
+    z-index:1100;
+}
+#changeLogsContent {
+    white-space: pre-wrap;
+    font-family: inherit;
+}
 </style>
 </head>
 <body>
@@ -53,13 +83,64 @@ th{background:#34495e;color:#ffcc00;text-transform:uppercase;font-weight:600;}
 <div id="countdown">Loading countdown...</div>
 <div id="nextPrayer"></div>
 <button id="offlineBtn">How to use offline</button>
+
+<!-- Change Logs Button -->
+<button id="changeLogsBtn" title="View Change Logs">Changelog</button>
+
+<!-- Change Logs Modal -->
+<div id="changeLogsModal">
+  <div style="background:#1c2833;padding:20px 30px;border-radius:12px;color:#ffd700;text-align:left;max-height:70%;overflow:auto;box-shadow:0 0 15px #ffd700cc;">
+    <h3>Change Logs</h3>
+    <pre id="changeLogsContent"></pre>
+    <button id="changeLogsClose" style="margin-top:15px;background:#ffd700;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;color:#111;font-weight:600;">Close</button>
+  </div>
+</div>
+
 <script>
 function loadScript(s){const e=document.createElement('script');e.src=s;e.defer=true;document.body.appendChild(e);}
 function hideModal(){document.getElementById('regionModal').style.display='none';}
 document.getElementById('sharjahBtn').addEventListener('click',()=>{hideModal();loadScript('script.js');});
 document.getElementById('dubaiBtn').addEventListener('click',()=>{hideModal();loadScript('scriptD.js');});
 document.getElementById('offlineBtn').addEventListener('click',()=>{window.location.href='offline.html';});
-const infoBtn=document.getElementById('infoBtn');const infoModal=document.getElementById('infoModal');const infoClose=document.getElementById('infoClose');infoBtn.addEventListener('click',()=>{infoModal.style.display='flex';});infoClose.addEventListener('click',()=>{infoModal.style.display='none';});infoModal.addEventListener('click',e=>{if(e.target===infoModal){infoModal.style.display='none';}});
+
+const infoBtn=document.getElementById('infoBtn');
+const infoModal=document.getElementById('infoModal');
+const infoClose=document.getElementById('infoClose');
+infoBtn.addEventListener('click',()=>{infoModal.style.display='flex';});
+infoClose.addEventListener('click',()=>{infoModal.style.display='none';});
+infoModal.addEventListener('click',e=>{if(e.target===infoModal){infoModal.style.display='none';}});
+
+// Change Logs
+const changelog = `
+v0.1 - made first beta version with timings from adhan-js
+v0.2 - changed timings source to government website for accuracy
+v0.3 - changed style to look more appealing
+v1.0 - IM DONE, The website is done and is in use
+v1.1 - Added a region switch button to account for my dubai friends
+v1.2 - added a offline mode and instructions for android
+v1.3 - Changed hosting site from Netlify to Github to allow updates
+v1.3.1 - added changelogs cuz why not
+`;
+
+const changeLogsBtn = document.getElementById('changeLogsBtn');
+const changeLogsModal = document.getElementById('changeLogsModal');
+const changeLogsContent = document.getElementById('changeLogsContent');
+const changeLogsClose = document.getElementById('changeLogsClose');
+
+changeLogsBtn.addEventListener('click', () => {
+    changeLogsContent.innerText = changelog;
+    changeLogsModal.style.display = 'flex';
+});
+
+changeLogsClose.addEventListener('click', () => {
+    changeLogsModal.style.display = 'none';
+});
+
+changeLogsModal.addEventListener('click', e => {
+    if(e.target === changeLogsModal){
+        changeLogsModal.style.display = 'none';
+    }
+});
 </script>
 </body>
 </html>
