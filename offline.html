@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Offline Instructions</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1c2833;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      min-height: 100vh;
+      margin: 0;
+      position: relative;
+    }
+    video {
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+    }
+    #instructionsBtn {
+      margin-top: 20px;
+      padding: 12px 25px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      background-color: #2ecc71;
+      color: #111;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(46,204,113,0.7);
+      transition: background-color 0.3s ease;
+    }
+    #instructionsBtn:hover {
+      background-color: #27ae60;
+    }
+    /* Back button */
+    .backBtn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #ffd700;
+      color: #111;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 8px #ffd700aa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: background-color 0.3s ease;
+      z-index: 10000;
+    }
+    .backBtn:hover {
+      background-color: #e6c200;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="backBtn" onclick="window.location.href='index.html'">Back to Timings</button>
+
+  <video controls autoplay muted playsinline>
+    <source src="offline.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  <button id="instructionsBtn">Image Instructions</button>
+
+  <script>
+    document.getElementById('instructionsBtn').addEventListener('click', () => {
+      window.location.href = 'image-instructions.html';
+    });
+  </script>
+
+</body>
+</html>
