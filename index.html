@@ -27,36 +27,13 @@ th{background:#34495e;color:#ffcc00;text-transform:uppercase;font-weight:600;}
 #infoModal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;z-index:1200;}
 #infoContent{background:#1c2833;padding:20px 30px;border-radius:12px;color:#ffd700;text-align:center;box-shadow:0 0 15px #ffd700cc;}
 #infoClose{margin-top:15px;background:#ffd700;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;color:#111;font-weight:600;}
+#changeRegionBtn{position:fixed;top:60px;right:20px;width:28px;height:28px;background:#2980b9;color:#fff;border:none;border-radius:50%;cursor:pointer;font-weight:bold;box-shadow:0 0 8px #1c5980;display:flex;justify-content:center;align-items:center;}
 /* Change Logs Button */
-#changeLogsBtn {
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    font-size: 10px;
-    padding: 4px 8px;
-    border: none;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #ffd700;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    z-index: 1000;
-    transition: all 0.2s;
-}
+#changeLogsBtn { position: fixed; bottom: 10px; right: 10px; font-size: 10px; padding: 4px 8px; border: none; border-radius: 6px; background: rgba(255, 255, 255, 0.1); color: #ffd700; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 1000; transition: all 0.2s;}
 #changeLogsBtn:hover { background: rgba(255, 255, 255, 0.2); }
 /* Change Logs Modal */
-#changeLogsModal {
-    display: none;
-    position: fixed;
-    top:0; left:0; width:100%; height:100%;
-    background: rgba(0,0,0,0.6);
-    justify-content:center; align-items:center;
-    z-index:1100;
-}
-#changeLogsContent {
-    white-space: pre-wrap;
-    font-family: inherit;
-}
+#changeLogsModal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:1100;}
+#changeLogsContent { white-space: pre-wrap; font-family: inherit;}
 </style>
 </head>
 <body>
@@ -67,13 +44,17 @@ th{background:#34495e;color:#ffcc00;text-transform:uppercase;font-weight:600;}
 <button class="regionBtn" id="dubaiBtn">Dubai</button>
 </div>
 </div>
+
 <button id="infoBtn">i</button>
+<button id="changeRegionBtn" title="Change Region">R</button>
+
 <div id="infoModal">
 <div id="infoContent">
 <p>WAQSH is a simple prayer time tracker based on a predetermined schedule, timings may not be accurate as timings change everyday. Schedule source: sia.gov.ae -Armaan</p>
 <button id="infoClose">Close</button>
 </div>
 </div>
+
 <h1>WAQSH</h1>
 <h2>Prayer Timings</h2>
 <table>
@@ -97,18 +78,53 @@ th{background:#34495e;color:#ffcc00;text-transform:uppercase;font-weight:600;}
 </div>
 
 <script>
-function loadScript(s){const e=document.createElement('script');e.src=s;e.defer=true;document.body.appendChild(e);}
-function hideModal(){document.getElementById('regionModal').style.display='none';}
-document.getElementById('sharjahBtn').addEventListener('click',()=>{hideModal();loadScript('script.js');});
-document.getElementById('dubaiBtn').addEventListener('click',()=>{hideModal();loadScript('scriptD.js');});
-document.getElementById('offlineBtn').addEventListener('click',()=>{window.location.href='offline.html';});
+// Load script function
+function loadScript(s){ 
+    const e=document.createElement('script');
+    e.src=s;
+    e.defer=true;
+    document.body.appendChild(e);
+}
 
+// Hide modal
+function hideModal(){ 
+    document.getElementById('regionModal').style.display='none';
+}
+
+// Set region and save to localStorage
+function setRegion(region){
+    localStorage.setItem('selectedRegion', region);
+    hideModal();
+    if(region === 'sharjah') loadScript('script.js');
+    if(region === 'dubai') loadScript('scriptD.js');
+}
+
+// Check if region was already selected
+const savedRegion = localStorage.getItem('selectedRegion');
+if(savedRegion){
+    hideModal();
+    setRegion(savedRegion);
+} else {
+    document.getElementById('sharjahBtn').addEventListener('click', ()=> setRegion('sharjah'));
+    document.getElementById('dubaiBtn').addEventListener('click', ()=> setRegion('dubai'));
+}
+
+// Info Modal
 const infoBtn=document.getElementById('infoBtn');
 const infoModal=document.getElementById('infoModal');
 const infoClose=document.getElementById('infoClose');
 infoBtn.addEventListener('click',()=>{infoModal.style.display='flex';});
 infoClose.addEventListener('click',()=>{infoModal.style.display='none';});
 infoModal.addEventListener('click',e=>{if(e.target===infoModal){infoModal.style.display='none';}});
+
+// Change Region Button
+const changeRegionBtn = document.getElementById('changeRegionBtn');
+changeRegionBtn.addEventListener('click', ()=>{
+    document.getElementById('regionModal').style.display = 'flex';
+});
+
+// Offline button
+document.getElementById('offlineBtn').addEventListener('click',()=>{window.location.href='offline.html';});
 
 // Change Logs
 const changelog = `
