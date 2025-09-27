@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WAQSH-prayer timings</title>
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+<style>
+body {background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);color:#f0f0f0;padding:30px;max-width:450px;margin:auto;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.6);min-height:100vh;display:flex;flex-direction:column;position:relative;font-family:'Segoe UI',Tahoma,Verdana,sans-serif;}
+h1{color:#ffd700;text-align:center;margin-bottom:25px;font-weight:700;text-shadow:0 0 8px #ffd700aa;}
+h2{color:#e2d700;text-align:center;margin-bottom:25px;font-weight:700;text-shadow:0 0 8px #ffd700aa;}
+table{width:100%;border-collapse:separate;border-spacing:0 10px;box-shadow:0 4px 15px rgba(0,0,0,0.3);}
+th,td{padding:12px 15px;text-align:center;background:#1c2833;border-radius:8px;transition:all 0.3s;}
+th{background:#34495e;color:#ffcc00;text-transform:uppercase;font-weight:600;}
+.next{background:#2ecc71;color:#111;font-weight:600;box-shadow:0 0 12px #2ecc71;}
+#countdown{font-size:1.8em;font-weight:600;text-align:center;margin-top:20px;color:#ffcc00;text-shadow:0 0 8px #ffcc0077;}
+#nextPrayer{text-align:center;font-size:1.3em;margin-top:6px;color:#aad8d3;font-style:italic;}
+#offlineBtn{width:100%;padding:10px 0;margin-top:30px;background:#2ecc71;color:#111;border:none;border-radius:6px;cursor:pointer;font-weight:700;box-shadow:0 4px 8px rgba(46,204,113,0.5);}
+#offlineBtn:hover{background:#27ae60;}
+#regionModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);display:flex;justify-content:center;align-items:center;z-index:1000;}
+#regionBox{background:#1c2833;padding:20px 30px;border-radius:12px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.5);}
+.regionBtn{margin:0 10px;padding:10px 20px;border:none;border-radius:6px;background:#2980b9;color:#fff;cursor:pointer;}
+.regionBtn:hover{background:#1c5980;}
+#infoBtn{position:fixed;top:20px;right:20px;width:28px;height:28px;background:#ffd700;color:#111;border:none;border-radius:50%;cursor:pointer;font-weight:bold;box-shadow:0 0 8px #ffd700aa;}
+#infoModal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;z-index:1200;}
+#infoContent{background:#1c2833;padding:20px 30px;border-radius:12px;color:#ffd700;text-align:center;box-shadow:0 0 15px #ffd700cc;}
+#infoClose{margin-top:15px;background:#ffd700;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;color:#111;font-weight:600;}
+/* Change Logs Button */
+#changeLogsBtn {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 10px;
+    padding: 4px 8px;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffd700;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    z-index: 1000;
+    transition: all 0.2s;
+}
+#changeLogsBtn:hover { background: rgba(255, 255, 255, 0.2); }
+/* Change Logs Modal */
+#changeLogsModal {
+    display: none;
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.6);
+    justify-content:center; align-items:center;
+    z-index:1100;
+}
+#changeLogsContent {
+    white-space: pre-wrap;
+    font-family: inherit;
+}
+</style>
+</head>
+<body>
+<div id="regionModal">
+<div id="regionBox">
+<h2>Select Region</h2>
+<button class="regionBtn" id="sharjahBtn">Sharjah</button>
+<button class="regionBtn" id="dubaiBtn">Dubai</button>
+</div>
+</div>
+<button id="infoBtn">i</button>
+<div id="infoModal">
+<div id="infoContent">
+<p>WAQSH is a simple prayer time tracker based on a predetermined schedule, timings may not be accurate as timings change everyday. Schedule source: sia.gov.ae -Armaan</p>
+<button id="infoClose">Close</button>
+</div>
+</div>
+<h1>WAQSH</h1>
+<h2>Prayer Timings</h2>
+<table>
+<thead><tr><th>Prayer</th><th>Adhan</th><th>Iqamah</th></tr></thead>
+<tbody id="prayerTableBody"></tbody>
+</table>
+<div id="countdown">Loading countdown...</div>
+<div id="nextPrayer"></div>
+<button id="offlineBtn">How to use offline</button>
+
+<!-- Change Logs Button -->
+<button id="changeLogsBtn" title="View Change Logs">Changelog</button>
+
+<!-- Change Logs Modal -->
+<div id="changeLogsModal">
+  <div style="background:#1c2833;padding:20px 30px;border-radius:12px;color:#ffd700;text-align:left;max-height:70%;overflow:auto;box-shadow:0 0 15px #ffd700cc;">
+    <h3>Change Logs</h3>
+    <pre id="changeLogsContent"></pre>
+    <button id="changeLogsClose" style="margin-top:15px;background:#ffd700;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;color:#111;font-weight:600;">Close</button>
+  </div>
+</div>
+
+<script>
+function loadScript(s){const e=document.createElement('script');e.src=s;e.defer=true;document.body.appendChild(e);}
+function hideModal(){document.getElementById('regionModal').style.display='none';}
+document.getElementById('sharjahBtn').addEventListener('click',()=>{hideModal();loadScript('script.js');});
+document.getElementById('dubaiBtn').addEventListener('click',()=>{hideModal();loadScript('scriptD.js');});
+document.getElementById('offlineBtn').addEventListener('click',()=>{window.location.href='offline.html';});
+
+const infoBtn=document.getElementById('infoBtn');
+const infoModal=document.getElementById('infoModal');
+const infoClose=document.getElementById('infoClose');
+infoBtn.addEventListener('click',()=>{infoModal.style.display='flex';});
+infoClose.addEventListener('click',()=>{infoModal.style.display='none';});
+infoModal.addEventListener('click',e=>{if(e.target===infoModal){infoModal.style.display='none';}});
+
+// Change Logs
+const changelog = `
+v0.1 - made first beta version with timings from adhan-js
+v0.2 - changed timings source to government website for accuracy
+v0.3 - changed style to look more appealing
+v1.0 - IM DONE, The website is done and is in use
+v1.1 - Added a region switch button to account for my dubai friends
+v1.2 - added a offline mode and instructions for android
+v1.3 - Changed hosting site from Netlify to Github to allow updates
+v1.3.1 - added changelogs cuz why not
+`;
+
+const changeLogsBtn = document.getElementById('changeLogsBtn');
+const changeLogsModal = document.getElementById('changeLogsModal');
+const changeLogsContent = document.getElementById('changeLogsContent');
+const changeLogsClose = document.getElementById('changeLogsClose');
+
+changeLogsBtn.addEventListener('click', () => {
+    changeLogsContent.innerText = changelog;
+    changeLogsModal.style.display = 'flex';
+});
+
+changeLogsClose.addEventListener('click', () => {
+    changeLogsModal.style.display = 'none';
+});
+
+changeLogsModal.addEventListener('click', e => {
+    if(e.target === changeLogsModal){
+        changeLogsModal.style.display = 'none';
+    }
+});
+</script>
+</body>
+</html>
